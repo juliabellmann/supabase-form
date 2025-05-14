@@ -105,18 +105,32 @@ const handleLogout = async () => {
       ) : (
         <ul>
           {forms.map((form) => (
-            <StyledLi key={form.id}>
+            <li key={form.id}>
               Objekt: {form.objektbezeichnung || 'Noch nicht angegeben'} – Status: {form.status}
               {form.status === 'draft' && (
                 <StyledButton onClick={() => continueForm(form.id)}>Weiter bearbeiten</StyledButton>
               )}
-            </StyledLi>
+            </li>
           ))}
         </ul>
       )}
 
       {/* Logout-Button */}
-      <button onClick={handleLogout}>Abmelden</button>
+      <StyledButton onClick={handleLogout}>Abmelden</StyledButton>
     </div>
   );
 }
+const StyledButton = styled.button`
+  background-color: #b5a286;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  margin-top: 10px;
+  /* border-radius: 4px; */
+  cursor: pointer;
+
+  &:hover {
+    background-color: #b5a286;
+    text-decoration: underline;
+  }
+`;
