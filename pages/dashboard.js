@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import supabase from '../lib/supabaseClient';
 import { useRouter } from 'next/router';
+import styled from 'styled-components';
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -93,10 +94,12 @@ const handleLogout = async () => {
 };
 
   return (
-    <div>
-      <h1>Willkommen {user?.email}</h1>
+    <StyledSite>
+      {/* <h1>Willkommen {user?.email}</h1> */}
+      <h1>Willkommen</h1>
+      <p>Vielen lieben Dank für Ihr Mitwirken</p>
 
-      <button onClick={handleNewForm}>Neues Formular erstellen</button>
+      <StyledButton onClick={handleNewForm}>Neues Formular erstellen</StyledButton>
 
       <h2>Deine Formulare:</h2>
       {forms.length === 0 ? (
@@ -107,7 +110,7 @@ const handleLogout = async () => {
             <li key={form.id}>
               Objekt: {form.objektbezeichnung || 'Noch nicht angegeben'} – Status: {form.status}
               {form.status === 'draft' && (
-                <button onClick={() => continueForm(form.id)}>Weiter bearbeiten</button>
+                <StyledButton onClick={() => continueForm(form.id)}>Weiter bearbeiten</StyledButton>
               )}
             </li>
           ))}
@@ -115,7 +118,31 @@ const handleLogout = async () => {
       )}
 
       {/* Logout-Button */}
-      <button onClick={handleLogout}>Abmelden</button>
-    </div>
+      <StyledButton onClick={handleLogout}>Abmelden</StyledButton>
+    </StyledSite>
   );
 }
+
+const StyledSite = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+background-color: rgba(198,220,225,.2);
+margin: 5rem 15rem;
+padding: 0 0 3rem 0;
+`;
+
+const StyledButton = styled.button`
+  background-color: #b5a286;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  margin-top: 10px;
+  /* border-radius: 4px; */
+  cursor: pointer;
+
+  &:hover {
+    background-color: #b5a286;
+    text-decoration: underline;
+  }
+`;

@@ -30,6 +30,8 @@ export default function Home() {
 
         <h2>Registrieren</h2>
       <StyledContainer>
+        <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
+        <input placeholder="Passwort" type="password" value={password} onChange={e => setPassword(e.target.value)} />
         <StyledButton onClick={handleRegister}>Registrieren</StyledButton>
       </StyledContainer>
     </StyledIndex>
@@ -42,7 +44,7 @@ const StyledIndex = styled.div`
   align-items: center;
 background-color: rgba(198,220,225,.2);
 margin: 5rem 15rem;
-padding: 3rem;
+padding: 0 0 3rem 0;
 `;
 
 const StyledButton = styled.button`
