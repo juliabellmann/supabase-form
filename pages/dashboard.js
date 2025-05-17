@@ -96,24 +96,31 @@ const handleLogout = async () => {
   return (
     <div>
       <h1>Willkommen {user?.email}</h1>
+      <p>Vielen Dank für die Mitarbeit ... </p>
+    <StyledForms>
+      <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 1. Ebene der DIN 276_Neubau (200,-Euro)*</StyledButton>
+      <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 3. Ebene der DIN 276_Neubau oder ALtbau (700,-Euro)*</StyledButton>
+      <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 3. Ebene der DIN 276_Innenraum (400,-Euro)*</StyledButton>
+      <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 3. Ebene der DIN 276_Freianlagen (250,-Euro)*</StyledButton>
+    </StyledForms>
 
-      <StyledButton onClick={handleNewForm}>Neues Formular erstellen</StyledButton>
-
-      <h2>Deine Formulare:</h2>
-      {forms.length === 0 ? (
-        <p>Du hast noch keine Formulare.</p>
-      ) : (
-        <ul>
-          {forms.map((form) => (
-            <li key={form.id}>
-              Objekt: {form.objektbezeichnung || 'Noch nicht angegeben'} – Status: {form.status}
-              {form.status === 'draft' && (
-                <StyledButton onClick={() => continueForm(form.id)}>Weiter bearbeiten</StyledButton>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
+      <StyledContainer>
+        <h2>Bereits bearbeitete Formulare:</h2>
+        {forms.length === 0 ? (
+          <p>Es wurden noch keine Formulare ausgefüllt.</p>
+        ) : (
+          <ul>
+            {forms.map((form) => (
+              <li key={form.id}>
+                Objekt: {form.objektbezeichnung || 'Noch nicht angegeben'} – Status: {form.status}
+                {form.status === 'draft' && (
+                  <StyledButton onClick={() => continueForm(form.id)}>Weiter bearbeiten</StyledButton>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </StyledContainer>
 
       {/* Logout-Button */}
       <StyledButton onClick={handleLogout}>Abmelden</StyledButton>
@@ -134,3 +141,26 @@ const StyledButton = styled.button`
     text-decoration: underline;
   }
 `;
+
+const StyledForms = styled.div`
+  /* background-color: red; */
+  padding: 1rem;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+`;
+
+const StyledContainer = styled.div`
+  background-color: var(--bg-color-highlight);
+  margin: 2rem 0;
+  padding: 1rem 2rem 3rem 2rem;
+  `;
+
+// const StyledList = styled.li`
+//   display: flex;
+//   flex-direction: row;
+//   justify-content: space-between;
+//   gap: 1rem;
+//   `;
