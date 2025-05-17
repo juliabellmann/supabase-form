@@ -4,25 +4,39 @@ import { useRouter } from 'next/router';
 import styled from 'styled-components';
 import Link from 'next/link';
 
-export default function Login() {
+export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const router = useRouter();
 
-  const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (!error) router.push('/dashboard');
-    else alert('Fehler beim Einloggen: ' + error.message);
+  const handleRegister = async () => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          username,
+        }
+      }
+    });
+    if (!error) {
+      alert('Registrierung erfolgreich!');
+      router.push('/');
+    } else {
+      alert('Fehler bei der Registrierung: ' + error.message);
+    }
   };
 
   return (
     <StyledPage>
-      <h2>Login</h2>
+      <h2>Registrieren</h2>
       <StyledContainer>
+        <input placeholder="Benutzername" value={username} onChange={e => setUsername(e.target.value)} />
         <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
         <input placeholder="Passwort" type="password" value={password} onChange={e => setPassword(e.target.value)} />
-        <StyledButton onClick={handleLogin}>Einloggen</StyledButton>
-        <p>Noch kein Account? <Link href="/register">Jetzt registrieren</Link></p>
+        <StyledButton onClick={handleRegister}>Registrieren</StyledButton>
+        <p>Schon registriert? <Link href="/">Zum Login</Link></p>
       </StyledContainer>
     </StyledPage>
   );
