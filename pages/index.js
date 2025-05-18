@@ -22,7 +22,7 @@ export default function Login() {
         <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
         <input placeholder="Passwort" type="password" value={password} onChange={e => setPassword(e.target.value)} />
         <StyledButton onClick={handleLogin}>Einloggen</StyledButton>
-        <p>Noch kein Account? <Link href="/register">Jetzt registrieren</Link></p>
+        <p>Noch kein Account? <StyledLink href="/register">Jetzt registrieren</StyledLink></p>
       </StyledContainer>
     </StyledPage>
   );
@@ -56,4 +56,9 @@ const StyledContainer = styled.div`
   flex-direction: column;
   width: 60%;
   gap: 1rem;
+`;
+
+const StyledLink = styled(Link)`
+  color: var(--primary-color);
+  text-decoration: underline;
 `;

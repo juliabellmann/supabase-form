@@ -94,9 +94,9 @@ const handleLogout = async () => {
 };
 
   return (
-    <div>
-      <h1>Willkommen {user?.email}</h1>
-      <p>Vielen Dank für die Mitarbeit ... </p>
+    <StyledDashboard>
+      <h1>Willkommen Nutzer {user?.email}</h1>
+      <p>Vielen Dank für die Mitarbeit ... (Text einfügen) </p>
     <StyledForms>
       <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 1. Ebene der DIN 276_Neubau (200,-Euro)*</StyledButton>
       <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 3. Ebene der DIN 276_Neubau oder ALtbau (700,-Euro)*</StyledButton>
@@ -111,12 +111,13 @@ const handleLogout = async () => {
         ) : (
           <ul>
             {forms.map((form) => (
-              <li key={form.id}>
+              <StyledList key={form.id}>
+                📖
                 Objekt: {form.objektbezeichnung || 'Noch nicht angegeben'} – Status: {form.status}
                 {form.status === 'draft' && (
                   <StyledButton onClick={() => continueForm(form.id)}>Weiter bearbeiten</StyledButton>
                 )}
-              </li>
+              </StyledList>
             ))}
           </ul>
         )}
@@ -124,15 +125,20 @@ const handleLogout = async () => {
 
       {/* Logout-Button */}
       <StyledButton onClick={handleLogout}>Abmelden</StyledButton>
-    </div>
+    </StyledDashboard>
   );
 }
+
+const StyledDashboard = styled.div`
+  width: 100%;
+`;
+
 const StyledButton = styled.button`
   background-color: #b5a286;
   color: white;
   border: none;
-  padding: 10px 16px;
-  margin-top: 10px;
+  padding: 0.5rem 1rem;
+  /* margin-top: 10px; */
   /* border-radius: 4px; */
   cursor: pointer;
 
@@ -156,11 +162,16 @@ const StyledContainer = styled.div`
   background-color: var(--bg-color-highlight);
   margin: 2rem 0;
   padding: 1rem 2rem 3rem 2rem;
+
   `;
 
-// const StyledList = styled.li`
-//   display: flex;
-//   flex-direction: row;
-//   justify-content: space-between;
-//   gap: 1rem;
-//   `;
+const StyledList = styled.li`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+
+  margin: 0.5rem 0;
+  height: 50px;
+  `;
