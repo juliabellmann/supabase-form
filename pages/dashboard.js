@@ -95,7 +95,7 @@ const handleLogout = async () => {
 
   return (
     <StyledDashboard>
-      <h1>Willkommen Nutzer {user?.email}</h1>
+      <h2>Willkommen Nutzer {user?.email}</h2>
       <p>Vielen Dank für die Mitarbeit ... (Text einfügen) </p>
     <StyledForms>
       <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 1. Ebene der DIN 276_Neubau (200,-Euro)*</StyledButton>
@@ -161,8 +161,11 @@ const StyledForms = styled.div`
 const StyledContainer = styled.div`
   background-color: var(--bg-color-highlight);
   margin: 2rem 0;
-  padding: 1rem 2rem 3rem 2rem;
+  padding: 1rem 15rem 3rem 15rem;
 
+  h2 {
+    margin: 3rem 0;
+  }
   `;
 
 const StyledList = styled.li`
