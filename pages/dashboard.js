@@ -94,43 +94,59 @@ const handleLogout = async () => {
 };
 
   return (
-    <StyledDashboard>
-      <h2>Willkommen Nutzer {user?.email}</h2>
-      <p>Vielen Dank für die Mitarbeit ... (Text einfügen) </p>
-    <StyledForms>
-      <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 1. Ebene der DIN 276_Neubau (200,-Euro)*</StyledButton>
-      <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 3. Ebene der DIN 276_Neubau oder ALtbau (700,-Euro)*</StyledButton>
-      <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 3. Ebene der DIN 276_Innenraum (400,-Euro)*</StyledButton>
-      <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 3. Ebene der DIN 276_Freianlagen (250,-Euro)*</StyledButton>
-    </StyledForms>
+    <>
+      <StyledDashboard>
+        <StyledContainerWhite>
+          {/* <h2>Willkommen Nutzer {user?.email}</h2> */}
+          <h2>Projekt liefern</h2>
+          <p>Das BKI unterstützt mit seinen Baukosten-Datenbanken die Architektenschaft und alle am Bau Beteiligten bei einer qualifizierten Baukostenermittlung. Hauptaufgabe des BKI ist das Erarbeiten und Bereitstellen von Fachinformationen auf Basis abgerechneter Bauprojekte. Zur Fortschreibung und Erweiterung dieser Objekt-Datenbank benötigen wir kontinuierlich neue Projekte aus den Bereichen Neubau, Altbau und Freianlagen.</p>
+        <StyledForms>
+          <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 1. Ebene der DIN 276_Neubau (200,-Euro)*</StyledButton>
+          <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 3. Ebene der DIN 276_Neubau(700,-Euro)*</StyledButton>
+          <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 3. Ebene der DIN 276_Altbau (700,-Euro)*</StyledButton>
+          <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 3. Ebene der DIN 276_Innenraum (400,-Euro)*</StyledButton>
+          <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 3. Ebene der DIN 276_Freianlagen (250,-Euro)*</StyledButton>
+        </StyledForms>
+        </StyledContainerWhite> 
 
-      <StyledContainer>
-        <h2>Bereits bearbeitete Formulare:</h2>
-        {forms.length === 0 ? (
-          <p>Es wurden noch keine Formulare ausgefüllt.</p>
-        ) : (
-          <ul>
-            {forms.map((form) => (
-              <StyledList key={form.id}>
-                📖
-                Objekt: {form.objektbezeichnung || 'Noch nicht angegeben'} – Status: {form.status}
-                {form.status === 'draft' && (
-                  <StyledButton onClick={() => continueForm(form.id)}>Weiter bearbeiten</StyledButton>
-                )}
-              </StyledList>
-            ))}
-          </ul>
-        )}
-      </StyledContainer>
+          <StyledContainer>
+            <h2>Bereits bearbeitete Formulare:</h2>
+            {forms.length === 0 ? (
+              <p>Es wurden noch keine Formulare ausgefüllt.</p>
+            ) : (
+              <ul>
+                {forms.map((form) => (
+                  <StyledList key={form.id}>
+                    📖
+                    Objekt: {form.objektbezeichnung || 'Noch nicht angegeben'} – Status: {form.status}
+                    {form.status === 'draft' && (
+                      <StyledButton onClick={() => continueForm(form.id)}>Weiter bearbeiten</StyledButton>
+                    )}
+                  </StyledList>
+                ))}
+              </ul>
+            )}
+          </StyledContainer>
 
-      {/* Logout-Button */}
-      <StyledButton onClick={handleLogout}>Abmelden</StyledButton>
-    </StyledDashboard>
+          {/* Logout-Button */}
+          <StyledButton onClick={handleLogout}>Abmelden</StyledButton>
+      </StyledDashboard>
+    </>
   );
 }
 
 const StyledDashboard = styled.div`
-  width: 100%;
+display: flex;
+flex-direction: column;
+justify-content: center;
+  /* width: 100%; */
+  `;
+
+const StyledContainerWhite = styled.div`
+  /* background-color: var(--bg-color-highlight); */
+  margin: 2rem 0;
+  padding: 1rem 25rem 3rem 25rem;
+  /* max-width: 900px; */
 `;
 
 const StyledButton = styled.button`
@@ -161,7 +177,7 @@ const StyledForms = styled.div`
 const StyledContainer = styled.div`
   background-color: var(--bg-color-highlight);
   margin: 2rem 0;
-  padding: 1rem 15rem 3rem 15rem;
+  padding: 1rem 25rem 3rem 25rem;
 
   h2 {
     margin: 3rem 0;

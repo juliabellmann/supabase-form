@@ -36,7 +36,7 @@ export default function Register() {
         <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
         <input placeholder="Passwort" type="password" value={password} onChange={e => setPassword(e.target.value)} />
         <StyledButton onClick={handleRegister}>Registrieren</StyledButton>
-        <p>Schon registriert? <Link href="/">Zum Login</Link></p>
+        <p>Schon registriert? <StyledLink href="/">Zum Login</StyledLink></p>
       </StyledContainer>
     </StyledPage>
   );
@@ -70,4 +70,9 @@ const StyledContainer = styled.div`
   flex-direction: column;
   width: 60%;
   gap: 1rem;
+`;
+
+const StyledLink = styled(Link)`
+  color: var(--primary-color);
+  text-decoration: underline;
 `;
