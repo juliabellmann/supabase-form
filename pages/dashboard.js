@@ -62,7 +62,7 @@ export default function Dashboard() {
         size: [],
         strength: null,
         status: "draft",
-        files: [],
+        // files: [],
       })
       .select()
       .single();
