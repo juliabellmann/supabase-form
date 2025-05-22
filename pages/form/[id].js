@@ -7,6 +7,7 @@ import styled from 'styled-components';
 export default function Form() {
   const router = useRouter();
   const { id } = router.query;
+
   const [formData, setFormData] = useState({
     city: '',
     size: [],
@@ -16,15 +17,26 @@ export default function Form() {
     objektbezeichnung: '', 
   });
 
+  const [isReadonly, setIsReadonly] = useState(false); // ⬅️ Zustand zum Sperren des Formulars
+
   useEffect(() => {
     if (id && id !== 'new') {
       supabase.from('forms').select('*').eq('id', id).single().then(({ data }) => {
-        if (data) setFormData(data);
+        if (data) {
+          setFormData(data);
+
+          // ⬇️ Wenn das Formular eingereicht wurde, Formular schreibschützen
+          if (data.status === 'submitted') {
+            setIsReadonly(true);
+          }
+        }
       });
     }
   }, [id]);
 
   const handleSave = async () => {
+    if (isReadonly) return; // ⛔ Änderungen blockieren, wenn Formular readonly ist
+
     const user = await supabase.auth.getUser();
     const data = { ...formData, user_id: user.data.user.id, status: 'draft' };
 
@@ -38,11 +50,14 @@ export default function Form() {
   };
 
   const handleSubmit = async () => {
+    if (isReadonly) return; // ⛔ Einreichen blockieren, wenn bereits submitted
+
     await supabase.from('forms').update({ ...formData, status: 'submitted' }).eq('id', id);
     router.push('/dashboard');
   };
 
   const toggleSize = (val) => {
+    if (isReadonly) return; // ⛔ Keine Auswahländerung bei readonly
     setFormData(prev => ({
       ...prev,
       size: prev.size.includes(val) ? prev.size.filter(s => s !== val) : [...prev.size, val]
@@ -52,41 +67,120 @@ export default function Form() {
   return (
     <StyledSite>
       <h1>Formular</h1>
+
+      {/* Hinweis bei gesperrtem Formular */}
+      {isReadonly && (
+        <p style={{ backgroundColor: '#eee', padding: '1rem', marginBottom: '1rem' }}>
+          Dieses Formular wurde bereits eingereicht und ist nicht mehr bearbeitbar.
+        </p>
+      )}
+
       <form>
+        <fieldset>
+          <legend><h2>1. Allgemeine Angaben</h2></legend>
 
-      <fieldset>
-        <legend><h2>1. Allgemeine Angaben</h2></legend>
+          <div className="spacebetween">
+            <label htmlFor="objektbezeichnung">Objektbezeichnung: </label>
+            <input
+              id="objektbezeichnung"
+              placeholder="Objektbezeichnung"
+              value={formData.objektbezeichnung}
+              onChange={e => setFormData({ ...formData, objektbezeichnung: e.target.value })}
+              readOnly={isReadonly}
+            />
+          </div>
 
-        <div className="spacebetween">
-          <label for="objektbezeichnung">Objektbezeichnung: </label>
-          <input id="objektbezeichnung" placeholder="Objektbezeichnung" value={formData.objektbezeichnung} onChange={e => setFormData({ ...formData, objektbezeichnung: e.target.value })} />
-        </div>
+          <div className="spacebetween">
+            <label htmlFor="city">Stadt: </label>
+            <input
+              id="city"
+              placeholder="Stadt"
+              value={formData.city}
+              onChange={e => setFormData({ ...formData, city: e.target.value })}
+              readOnly={isReadonly}
+            />
+          </div>
+        </fieldset>
 
-        <div className="spacebetween">
-          <label for="city">Stadt: </label>
-          <input id="city" placeholder="Stadt" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} />
-        </div>
+        <fieldset>
+          <legend><h2>2. Objektbeschreibung</h2></legend>
 
-      </fieldset>
+          <div>
+            <label>
+              <input
+                type="checkbox"
+                onChange={() => toggleSize('klein')}
+                checked={formData.size.includes('klein')}
+                disabled={isReadonly}
+              /> klein
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                onChange={() => toggleSize('mittel')}
+                checked={formData.size.includes('mittel')}
+                disabled={isReadonly}
+              /> mittel
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                onChange={() => toggleSize('groß')}
+                checked={formData.size.includes('groß')}
+                disabled={isReadonly}
+              /> groß
+            </label>
+          </div>
 
-      <fieldset>
-        <legend><h2>2. Objektbeschreibung</h2></legend>
+          <div>
+            <label>
+              <input
+                type="radio"
+                name="strength"
+                value="stark"
+                checked={formData.strength === 'stark'}
+                onChange={e => setFormData({ ...formData, strength: e.target.value })}
+                disabled={isReadonly}
+              /> stark
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="strength"
+                value="mittel"
+                checked={formData.strength === 'mittel'}
+                onChange={e => setFormData({ ...formData, strength: e.target.value })}
+                disabled={isReadonly}
+              /> mittel
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="strength"
+                value="schwach"
+                checked={formData.strength === 'schwach'}
+                onChange={e => setFormData({ ...formData, strength: e.target.value })}
+                disabled={isReadonly}
+              /> schwach
+            </label>
+          </div>
+        </fieldset>
 
-        <div>
-          <label><input type="checkbox" onChange={() => toggleSize('klein')} checked={formData.size.includes('klein')} /> klein</label>
-          <label><input type="checkbox" onChange={() => toggleSize('mittel')} checked={formData.size.includes('mittel')} /> mittel</label>
-          <label><input type="checkbox" onChange={() => toggleSize('groß')} checked={formData.size.includes('groß')} /> groß</label>
-        </div>
-        <div>
-          <label><input type="radio" name="strength" value="stark" checked={formData.strength === 'stark'} onChange={e => setFormData({ ...formData, strength: e.target.value })} /> stark</label>
-          <label><input type="radio" name="strength" value="mittel" onChange={e => setFormData({ ...formData, strength: e.target.value })} /> mittel</label>
-          <label><input type="radio" name="strength" value="schwach" onChange={e => setFormData({ ...formData, strength: e.target.value })} /> schwach</label>
-        </div>
-      </fieldset>
-
-      <StyledButton type="button" onClick={handleSave}>Zwischenspeichern</StyledButton>
-      <StyledButton type="button" onClick={handleSubmit}>Absenden</StyledButton>
+        {/* Buttons deaktivieren, wenn readonly */}
+        <StyledButton type="button" onClick={handleSave} disabled={isReadonly}>
+          Zwischenspeichern
+        </StyledButton>
+        <StyledButton type="button" onClick={handleSubmit} disabled={isReadonly}>
+          Absenden
+        </StyledButton>
       </form>
+
+          {/* ⬇️ Zurück-Button nur im readonly-Modus */}
+    {isReadonly && (
+      <StyledBackButton type="button" onClick={() => router.push('/dashboard')}>
+        Zurück zum Dashboard
+      </StyledBackButton>
+    )}
     </StyledSite>
   );
 }
@@ -95,9 +189,9 @@ const StyledSite = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-background-color: rgba(198,220,225,.2);
-margin: 5rem 15rem;
-padding: 0 0 3rem 0;
+  background-color: rgba(198,220,225,.2);
+  margin: 5rem 15rem;
+  padding: 0 0 3rem 0;
 `;
 
 const StyledButton = styled.button`
@@ -106,11 +200,28 @@ const StyledButton = styled.button`
   border: none;
   padding: 10px 16px;
   margin-top: 10px;
-  /* border-radius: 4px; */
   cursor: pointer;
 
   &:hover {
     background-color: #b5a286;
     text-decoration: underline;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    text-decoration: none;
+  }
+`;
+const StyledBackButton = styled.button`
+  margin-top: 2rem;
+  background-color: #777;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #555;
   }
 `;
