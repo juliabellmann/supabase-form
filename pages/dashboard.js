@@ -7,10 +7,11 @@ import styled from 'styled-components';
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [forms, setForms] = useState([]);
+    const [profile, setProfile] = useState(null); 
   const router = useRouter();
 
   useEffect(() => {
-    const getUserAndForms = async () => {
+    const getUserFormsAndProfile = async () => {
       const {
         data: { user },
         error: userError
@@ -23,6 +24,7 @@ export default function Dashboard() {
 
       setUser(user);
 
+      // Forms laden
       const { data: formsData, error: formError } = await supabase
         .from('forms')
         .select('*')
@@ -34,10 +36,23 @@ export default function Dashboard() {
       } else {
         setForms(formsData);
       }
+
+      // Profile laden
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('company_name, company_street, company_house_nr, company_zip, company_city, company_contact_person')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError) {
+        console.error('Fehler beim Laden des Profils:', profileError.message);
+      } else {
+        setProfile(profileData);
+      }
     };
 
-    getUserAndForms();
-  }, []);
+ getUserFormsAndProfile();
+  }, [router]);
 
   const handleNewForm = async () => {
     const {
@@ -62,7 +77,6 @@ export default function Dashboard() {
         size: [],
         strength: null,
         status: "draft",
-        // files: [],
       })
       .select()
       .single();
@@ -94,10 +108,33 @@ export default function Dashboard() {
     }
   };
 
+    const handleEditProfile = () => {
+    router.push('/profile/edit'); // Hier öffnest du dein neues Profil-Bearbeitungsformular
+  };
+
   return (
     <>
       <StyledDashboard>
+          {profile ? (
+              <h2>Herzlich Willkommen <i>{profile.company_name || 'User'}</i></h2>
+            ) : (
+              <p>Profildaten konnten nicht geladen werden.</p>
+          )}
         <StyledContainerWhite>
+              <StyledContainer>
+          <h2>Ihre Profildaten:</h2>
+          {profile ? (
+            <div>
+              <p><strong>Firmenname:</strong> {profile.company_name || '-'}</p>
+              <p><strong>Straße:</strong> {profile.company_street || '-'} {profile.company_house_nr || ''}</p>
+              <p><strong>PLZ / Ort:</strong> {profile.company_zip || '-'} {profile.company_city || '-'}</p>
+              <p><strong>Ansprechpartner:</strong> {profile.company_contact_person || '-'}</p>
+            </div>
+          ) : (
+            <p>Profildaten konnten nicht geladen werden.</p>
+          )}
+          <StyledButton onClick={handleEditProfile}>Profil bearbeiten</StyledButton>
+        </StyledContainer>
           <h2>Projekt liefern</h2>
           <p>Das BKI unterstützt mit seinen Baukosten-Datenbanken die Architektenschaft und alle am Bau Beteiligten bei einer qualifizierten Baukostenermittlung...</p>
           

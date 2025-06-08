@@ -8,9 +8,17 @@ export default function Admin() {
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       const { data: userData } = await supabase.from('users').select('*').eq('id', user.id).single();
-      if (userData?.role === 'reader') {
-        const { data } = await supabase.from('forms').select('*');
-        setForms(data);
+      if (userData?.role === 'admin') {
+        const { data, error } = await supabase
+          .from('forms')
+          .select('*, users:users (email)')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Fehler beim Abrufen:', error);
+        } else {
+          setForms(data);
+        }
       }
     });
   }, []);
@@ -19,9 +27,10 @@ export default function Admin() {
     <div>
       <h1>Alle Formulare</h1>
       {forms.map(f => (
-        <div key={f.id}>
-          <p>Stadt: {f.city}</p>
-          <p>Status: {f.status}</p>
+        <div key={f.id} style={{ border: '1px solid #ccc', marginBottom: 10, padding: 10 }}>
+          <p><strong>Benutzer:</strong> {f.users?.email || 'Unbekannt'}</p>
+          <p><strong>Stadt:</strong> {f.city}</p>
+          <p><strong>Status:</strong> {f.status}</p>
         </div>
       ))}
     </div>
