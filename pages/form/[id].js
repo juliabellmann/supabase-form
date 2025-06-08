@@ -95,6 +95,15 @@ try {
     }));
   };
 
+  // const [isDownloading, setIsDownloading] = useState(false);
+  
+    // PDF Download Funktion
+  const downloadPdf = () => {
+      if (!id) return;
+    // öffnet die API-Route zum Herunterladen der PDF
+    window.open(`/api/downloadPdf?id=${id}`, '_blank');
+  };
+
   return (
       <>
     <StyledSite>
@@ -212,9 +221,14 @@ try {
 
           {/* ⬇️ Zurück-Button nur im readonly-Modus */}
     {isReadonly && (
+    <>
       <StyledBackButton type="button" onClick={() => router.push('/dashboard')}>
         Zurück zur Übersicht
       </StyledBackButton>
+      <StyledButton type="button" onClick={downloadPdf}>
+        PDF herunterladen
+      </StyledButton>
+    </>
     )}
     </StyledSite>
     <ToastContainer position="top-right" />
