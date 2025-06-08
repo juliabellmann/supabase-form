@@ -3,11 +3,16 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import supabase from '../../lib/supabaseClient';
 import styled from 'styled-components';
+// npm install react-toastify
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Form() {
   const router = useRouter();
   const { id } = router.query;
 
+// hier das neue Formularfeld ergänzen
   const [formData, setFormData] = useState({
     city: '',
     size: [],
@@ -40,13 +45,39 @@ export default function Form() {
     const user = await supabase.auth.getUser();
     const data = { ...formData, user_id: user.data.user.id, status: 'draft' };
 
+    // Bedingungen / Abfrage für toast-Message
+try {
     if (id === 'new') {
       await supabase.from('forms').insert(data);
+      toast.success("Formular erfolgreich zwischengespeichert!", {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     } else {
       await supabase.from('forms').update(data).eq('id', id);
+      toast.success("Änderungen wurden gespeichert.", {
+        position: "top-center",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     }
-
-    router.push('/dashboard');
+  } catch (error) {
+    toast.error("Beim Speichern ist ein Fehler aufgetreten.", {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+    });
+  }
   };
 
   const handleSubmit = async () => {
@@ -65,6 +96,7 @@ export default function Form() {
   };
 
   return (
+      <>
     <StyledSite>
       <h1>Formular</h1>
 
@@ -170,6 +202,9 @@ export default function Form() {
         <StyledButton type="button" onClick={handleSave} disabled={isReadonly}>
           Zwischenspeichern
         </StyledButton>
+              <StyledButton type="button" onClick={() => router.push('/dashboard')}>
+        Zurück zur Übersicht
+      </StyledButton>
         <StyledButton type="button" onClick={handleSubmit} disabled={isReadonly}>
           Absenden
         </StyledButton>
@@ -178,10 +213,12 @@ export default function Form() {
           {/* ⬇️ Zurück-Button nur im readonly-Modus */}
     {isReadonly && (
       <StyledBackButton type="button" onClick={() => router.push('/dashboard')}>
-        Zurück zum Dashboard
+        Zurück zur Übersicht
       </StyledBackButton>
     )}
     </StyledSite>
+    <ToastContainer position="top-right" />
+    </>
   );
 }
 
