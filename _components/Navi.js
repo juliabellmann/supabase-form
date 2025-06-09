@@ -13,14 +13,7 @@ export default function Navi() {
 }
 
 const StyledNavigation = styled.nav`
-  width: 100%;
-  background: var(--bg-color);
-  padding: 1rem;
-  color: var(--primary-color);
-  font-weight: bold;
-  /* border-bottom: 1px solid var(--secondary-color); */
-  padding: 0 5rem;
-  height: 150px;
+  padding: 4rem 15rem;
 
   display: flex;
   align-items: center;

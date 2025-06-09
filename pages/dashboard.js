@@ -115,13 +115,22 @@ export default function Dashboard() {
   return (
     <>
       <StyledDashboard>
-          {profile ? (
-              <h2>Herzlich Willkommen <i>{profile.company_name || 'User'}</i></h2>
-            ) : (
-              <p>Profildaten konnten nicht geladen werden.</p>
-          )}
-        <StyledContainerWhite>
-              <StyledContainer>
+
+        <StyledSection>
+          <StyledContainer>
+
+              {profile ? (
+                <h2>Herzlich Willkommen <i>{profile.company_name || 'User'}</i></h2>
+              ) : (
+                <p>Profildaten konnten nicht geladen werden.</p>
+              )}
+
+            </StyledContainer>
+        </StyledSection>
+
+        <StyledSection>
+          <StyledContainer>
+
           <h2>Ihre Profildaten:</h2>
           {profile ? (
             <div>
@@ -133,8 +142,16 @@ export default function Dashboard() {
           ) : (
             <p>Profildaten konnten nicht geladen werden.</p>
           )}
+          <div>
           <StyledButton onClick={handleEditProfile}>Profil bearbeiten</StyledButton>
-        </StyledContainer>
+          </div>
+
+          </StyledContainer>
+        </StyledSection>
+
+        <StyledSection>
+          <StyledContainer>
+
           <h2>Projekt liefern</h2>
           <p>Das BKI unterstützt mit seinen Baukosten-Datenbanken die Architektenschaft und alle am Bau Beteiligten bei einer qualifizierten Baukostenermittlung...</p>
           
@@ -145,9 +162,13 @@ export default function Dashboard() {
             <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 3. Ebene der DIN 276_Innenraum (400,-Euro)*</StyledButton>
             <StyledButton onClick={handleNewForm}>Projekt-Veröffentlichung bis zur 3. Ebene der DIN 276_Freianlagen (250,-Euro)*</StyledButton>
           </StyledForms>
-        </StyledContainerWhite> 
 
-        <StyledContainer>
+          </StyledContainer>
+        </StyledSection>
+
+        <StyledSection>
+          <StyledContainer>
+
           <h2>Bereits bearbeitete Formulare:</h2>
           {forms.length === 0 ? (
             <p>Es wurden noch keine Formulare ausgefüllt.</p>
@@ -166,24 +187,40 @@ export default function Dashboard() {
               ))}
             </ul>
           )}
-        </StyledContainer>
+          </StyledContainer>
+        </StyledSection>
 
         {/* Logout-Button */}
         <StyledButton onClick={handleLogout}>Abmelden</StyledButton>
+        
       </StyledDashboard>
     </>
   );
 }
 
 const StyledDashboard = styled.div`
+`;
+
+const StyledSection = styled.section`
+  background-color: var(--bg-color-highlight);
+
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items:center;
+
+  margin: 2rem 0;
+  padding: 2rem 0;
+  `;
+
+const StyledContainer =styled.div`
+  width: 1400px;
+  
+  display: flex;
+  flex-direction: column;
 `;
 
 const StyledContainerWhite = styled.div`
-  margin: 2rem 0;
-  padding: 1rem 25rem 3rem 25rem;
+/* code von StyledContainer eingeben plus BG Color */
 `;
 
 const StyledButton = styled.button`
@@ -207,15 +244,6 @@ const StyledForms = styled.div`
   gap: 1rem;
 `;
 
-const StyledContainer = styled.div`
-  background-color: var(--bg-color-highlight);
-  margin: 2rem 0;
-  padding: 1rem 25rem 3rem 25rem;
-
-  h2 {
-    margin: 3rem 0;
-  }
-`;
 
 const StyledList = styled.li`
   display: flex;
