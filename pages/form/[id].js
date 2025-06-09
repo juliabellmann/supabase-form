@@ -20,6 +20,12 @@ export default function Form() {
     files: [],
     status: 'draft',
     objektbezeichnung: '', 
+    baubeginn: "",
+    bauende: "",
+    planungsbeginn: "",
+    vergabedatum: "",
+    allgemeine_objektinformation: "",
+    baukonstruktion: "",
   });
 
   const [isReadonly, setIsReadonly] = useState(false); // ⬅️ Zustand zum Sperren des Formulars
@@ -117,7 +123,9 @@ try {
       )}
 
       <form>
-        <fieldset>
+
+        <StyledFieldset>
+        {/* Allgemeine Angaben */}
           <legend><h2>1. Allgemeine Angaben</h2></legend>
 
           <div className="spacebetween">
@@ -128,7 +136,7 @@ try {
               value={formData.objektbezeichnung}
               onChange={e => setFormData({ ...formData, objektbezeichnung: e.target.value })}
               readOnly={isReadonly}
-            />
+              />
           </div>
 
           <div className="spacebetween">
@@ -139,12 +147,86 @@ try {
               value={formData.city}
               onChange={e => setFormData({ ...formData, city: e.target.value })}
               readOnly={isReadonly}
+              />
+          </div>
+
+
+          <div className="spacebetween">
+            <label htmlFor="planungsbeginn">Planungsbeginn: </label>
+            <input
+              type="date"
+              id="planungsbeginn"
+              value={formData.planungsbeginn}
+              onChange={e => setFormData({ ...formData, planungsbeginn: e.target.value })}
+              readOnly={isReadonly}
+              />
+          </div>
+          <div className="spacebetween">
+            <label htmlFor="vergabedatum">Haupt-/Rohbauvergabe: </label>
+            <input
+              type="date"
+              id="vergabedatum"
+              value={formData.vergabedatum}
+              onChange={e => setFormData({ ...formData, vergabedatum: e.target.value })}
+              readOnly={isReadonly}
+              />
+          </div>
+          <div className="spacebetween">
+            <label htmlFor="baubeginn">Baubeginn: </label>
+            <input
+              type="date"
+              id="baubeginn"
+              value={formData.baubeginn}
+              onChange={e => setFormData({ ...formData, baubeginn: e.target.value })}
+              readOnly={isReadonly}
+              />
+          </div>
+          <div className="spacebetween">
+            <label htmlFor="bauende">Bauende: </label>
+            <input
+              type="date"
+              id="bauende"
+              value={formData.bauende}
+              onChange={e => setFormData({ ...formData, bauende: e.target.value })}
+              readOnly={isReadonly}
+              />
+          </div>
+
+        </StyledFieldset>
+
+        <StyledButton type="button" onClick={handleSave} disabled={isReadonly}>
+          Zwischenspeichern
+        </StyledButton>
+
+        <StyledFieldset>
+          <legend><h2>2. Objektbeschreibung</h2></legend>
+
+          <div className="spacebetween">
+            <label htmlFor="allgemeine_objektinformation">Allgemeine Objektinformation:</label>
+            <textarea
+              id="allgemeine_objektinformation"
+              placeholder="Beschreibe das Objekt hier..."
+              value={formData.allgemeine_objektinformation}
+              onChange={e => setFormData({ ...formData, allgemeine_objektinformation: e.target.value })}
+              readOnly={isReadonly}
+              rows={5}
+              style={{ width: '100%' }}
             />
           </div>
-        </fieldset>
 
-        <fieldset>
-          <legend><h2>2. Objektbeschreibung</h2></legend>
+          <div className="spacebetween">
+            <label htmlFor="baukonstruktion">Baukonstruktion: </label>
+            <textarea
+              id="baukonstruktion"
+              placeholder="Beschreibe das Objekt hier..."
+              value={formData.baukonstruktion}
+              onChange={e => setFormData({ ...formData, baukonstruktion: e.target.value })}
+              readOnly={isReadonly}
+              rows={5}
+              style={{ width: '100%' }}
+            />
+          </div>
+
 
           <div>
             <label>
@@ -205,8 +287,40 @@ try {
               /> schwach
             </label>
           </div>
-        </fieldset>
+        </StyledFieldset>
 
+        <StyledButton type="button" onClick={handleSave} disabled={isReadonly}>
+          Zwischenspeichern
+        </StyledButton>
+        
+        <StyledFieldset>
+          <legend><h2>3. Kosteneinflüsse</h2></legend>
+        </StyledFieldset>
+
+        <StyledButton type="button" onClick={handleSave} disabled={isReadonly}>
+          Zwischenspeichern
+        </StyledButton>
+
+        <StyledFieldset>
+          <legend><h2>4. Flächen und Rauminhalte nach DIN 277:2021-08</h2></legend>
+        </StyledFieldset>
+
+        <StyledButton type="button" onClick={handleSave} disabled={isReadonly}>
+          Zwischenspeichern
+        </StyledButton>
+        
+        <StyledFieldset>
+          <legend><h2>5. Kosten nach DIN 276:2018-12</h2></legend>
+        </StyledFieldset>
+
+        <StyledButton type="button" onClick={handleSave} disabled={isReadonly}>
+          Zwischenspeichern
+        </StyledButton>
+        
+        <StyledFieldset>
+          <legend><h2>6. weitere Projektangaben</h2></legend>
+        </StyledFieldset>
+        
         {/* Buttons deaktivieren, wenn readonly */}
         <StyledButton type="button" onClick={handleSave} disabled={isReadonly}>
           Zwischenspeichern
@@ -230,19 +344,28 @@ try {
       </StyledButton>
     </>
     )}
-    </StyledSite>
     <ToastContainer position="top-right" />
+    </StyledSite>
     </>
   );
 }
 
 const StyledSite = styled.div`
-  display: flex;
+ display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: rgba(198,220,225,.2);
+   /* background-color: rgba(198,220,225,.2);
   margin: 5rem 15rem;
-  padding: 0 0 3rem 0;
+  padding: 0 0 3rem 0; */
+`;
+
+const StyledFieldset = styled.fieldset`
+  background-color: var(--bg-color-highlight);
+  width: 1400px;
+
+  div {
+    width: 40%;
+  }
 `;
 
 const StyledButton = styled.button`
@@ -250,7 +373,7 @@ const StyledButton = styled.button`
   color: white;
   border: none;
   padding: 10px 16px;
-  margin-top: 10px;
+  margin: 2rem 1rem;
   cursor: pointer;
 
   &:hover {
@@ -265,11 +388,11 @@ const StyledButton = styled.button`
   }
 `;
 const StyledBackButton = styled.button`
-  margin-top: 2rem;
   background-color: #777;
   color: white;
   border: none;
   padding: 10px 16px;
+  margin: 2rem 1rem;
   cursor: pointer;
 
   &:hover {

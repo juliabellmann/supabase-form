@@ -29,10 +29,14 @@ h6 { font-size: 0.8rem; }
 input {
   background-color: white;
 }
+textarea {
+  background-color: white;
+}
 
 fieldset{
-  /* fieldsets Inhalt zentrieren */
   border: #004a99 1px solid;
+  
+  /* fieldsets Inhalt zentrieren */
   display: flex;
   flex-direction: column;
   justify-content: center;
