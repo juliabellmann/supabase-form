@@ -172,7 +172,7 @@ export default function Dashboard() {
           <h2>Bereits bearbeitete Formulare:</h2>
           {forms.length === 0 ? (
             <p>Es wurden noch keine Formulare ausgefüllt.</p>
-          ) : (
+            ) : (
             <ul>
               {forms.map((form) => (
                 <StyledList key={form.id}>
