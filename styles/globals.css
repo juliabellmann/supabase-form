@@ -10,50 +10,24 @@
   --text-color: #000;
 }
 
-/* @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
-
 body {
   color: var(--text-color);
   font-family: "Segoe UI Variable Text",sans-serif;
 }
 
-/* main {
-  margin: 0;
-  padding: 0;
-} */
-
-
 h1, h2, h3, h4, h5, h6 {
   color: var(--primary-color);
-  margin: 3rem;
 }
 
-h2 {
-  font-size: 2rem;
-}
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2.0rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.2rem; }
+h5 { font-size: 1.0rem; }
+h6 { font-size: 0.8rem; }
 
 input {
   background-color: white;
-}
-
-form {
-  /* border: #00e723 1px solid; */
-  /* breite des gesamten Formulars */
-  width: 1000px;
-  /* min-width: 1200px; */
-  /* padding: 5rem; */
 }
 
 fieldset{

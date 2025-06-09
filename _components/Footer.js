@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export default function Footer() {
   return (
       <StyledFooter>
-        <p>Copyright BKI</p>
+        <p>Copyright @ BKI</p>
       </StyledFooter>
   );
 }
