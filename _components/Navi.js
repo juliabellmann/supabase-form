@@ -12,7 +12,7 @@ export default function Navi() {
   );
 }
 
-const StyledNavigation = styled.div`
+const StyledNavigation = styled.nav`
   width: 100%;
   background: var(--bg-color);
   padding: 1rem;

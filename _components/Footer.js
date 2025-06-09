@@ -8,7 +8,7 @@ export default function Footer() {
   );
 }
 
-const StyledFooter = styled.div`
+const StyledFooter = styled.footer`
   background: var(--primary-color);
   color: white;
 
