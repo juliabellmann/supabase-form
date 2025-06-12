@@ -210,7 +210,7 @@ try {
               onChange={e => setFormData({ ...formData, allgemeine_objektinformation: e.target.value })}
               readOnly={isReadonly}
               rows={5}
-              style={{ width: '100%' }}
+              // style={{ width: '100%' }}
             />
           </div>
 
@@ -223,13 +223,48 @@ try {
               onChange={e => setFormData({ ...formData, baukonstruktion: e.target.value })}
               readOnly={isReadonly}
               rows={5}
-              style={{ width: '100%' }}
+              // style={{ width: '100%' }}
             />
           </div>
 
+          <div className="spacebetween">
+            <label htmlFor="technische_anlagen">Technische Anlagen: </label>
+            <textarea
+              id="technische_anlagen"
+              placeholder="Zwar wurden Varianten für die Energieversorgung berechnet,
+                dennoch musste das Passivhaus an Fernwärme angeschlossen werden. Sie wird an einen gemeinsamen Speicher übergeben, an den auch Flachkollektoren angeschlossen sind. Um eine Nachrüstung von Photovoltaikelementen zu vereinfachen, wurden Leerrohre verlegt. Jede Wohnung erhielt eine Zu- und Abluftanlage mit Wärmerückgewinnung. Die Luftdichtheit der Gebäude wurde mit einem Blower-Door-Test geprüft. Die passivhaustauglichen Holz-Aluminium-Fenster mit Dreifachverglasung sind zudem hoch schalldämmend."
+              value={formData.technische_anlagen}
+              onChange={e => setFormData({ ...formData, technische_anlagen: e.target.value })}
+              readOnly={isReadonly}
+              rows={5}
+              // style={{ width: '100%' }}
+            />
+          </div>
+
+          <div className="spacebetween">
+            <label htmlFor="beschreibung_sonstiges">Sonstiges: </label>
+            <textarea
+              id="beschreibung_sonstiges"
+              placeholder="Der kompakte Baukörper hat eine weinrote Holzfassade und ein hellgraues Staffelgeschoss. Auf der Nordseite wurden neben den Fenstern rückseitig lackierte Gläser eingesetzt. Sie lassen die Fensterformate breiter erscheinen, während innen flexibel möbliert werden kann. Die Holzinnendecken wurden weiß lasiert. Als weiteres Gestaltungselement wurden in den Treppenaugen Regale eingebaut. Den Vorbereich prägen optisch abgetrennte Carports und ein Holzsteg unter einem Glasvordach. Der Bereich hinter dem Haus wurde mit Erde angefüllt und erhielt eine Gartenanlage mit einer Trockenmauer."
+              value={formData.beschreibung_sonstiges}
+              onChange={e => setFormData({ ...formData, beschreibung_sonstiges: e.target.value })}
+              readOnly={isReadonly}
+              rows={5}
+              // style={{ width: '100%' }}
+            />
+          </div>
+
+        </StyledFieldset>
+
+        <StyledButton type="button" onClick={handleSave} disabled={isReadonly}>
+          Zwischenspeichern
+        </StyledButton>
+        
+        <StyledFieldset>
+          <legend><h2>3. Kosteneinflüsse</h2></legend>
 
           <div>
-            <label>
+            <label htmlFor='region'>
               <input
                 type="checkbox"
                 onChange={() => toggleSize('klein')}
@@ -287,14 +322,6 @@ try {
               /> schwach
             </label>
           </div>
-        </StyledFieldset>
-
-        <StyledButton type="button" onClick={handleSave} disabled={isReadonly}>
-          Zwischenspeichern
-        </StyledButton>
-        
-        <StyledFieldset>
-          <legend><h2>3. Kosteneinflüsse</h2></legend>
         </StyledFieldset>
 
         <StyledButton type="button" onClick={handleSave} disabled={isReadonly}>
@@ -364,7 +391,8 @@ const StyledFieldset = styled.fieldset`
   width: 1400px;
 
   div {
-    width: 40%;
+    /* Breite des Inhalts im fieldset */
+    width: 50%;
   }
 `;
 

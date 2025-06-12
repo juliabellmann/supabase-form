@@ -28,9 +28,12 @@ h6 { font-size: 0.8rem; }
 
 input {
   background-color: white;
+  width: 300px;
+  
 }
 textarea {
   background-color: white;
+  width: 400px;
 }
 
 fieldset{
