@@ -176,13 +176,22 @@ export default function Dashboard() {
             <ul>
               {forms.map((form) => (
                 <StyledList key={form.id}>
-                  📖
-                  Objekt: {form.objektbezeichnung || 'Noch nicht angegeben'} – Status: {form.status}
+                  📖Objekt: {form.objektbezeichnung || 'Noch nicht angegeben'} – Status: {form.status}
 
                   {/* Button immer zeigen – die Formularseite erkennt automatisch, ob es bearbeitbar ist */}
                   <StyledButton onClick={() => continueForm(form.id)}>
                     {form.status === 'draft' ? 'Weiter bearbeiten' : 'Ansehen'}
                   </StyledButton>
+
+                  {/* PDF-Download nur wenn Formular submitted ist */}
+                  {form.status === 'submitted' && (
+                    <StyledButton
+                      onClick={() => window.open(`/api/downloadPdf?id=${form.id}`, '_blank')}
+                      style={{ backgroundColor: '#888' }}
+                    >
+                      PDF
+                    </StyledButton>
+                  )}
                 </StyledList>
               ))}
             </ul>

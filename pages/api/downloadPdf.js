@@ -1,13 +1,18 @@
+// pages/api/downloadPdf.js
 import PDFDocument from 'pdfkit';
-import supabase from '../../lib/supabaseClient';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+process.env.NEXT_PUBLIC_SUPABASE_URL,
+process.env.SUPABASE_SERVICE_ROLE_KEY // ⚠️ Diese muss im .env stehen, niemals im Browser verwenden!
+);
 
 
 export default async function handler(req, res) {
   const { id } = req.query;
   
   if (!id) {
-    res.status(400).json({ error: 'Formular-ID fehlt' });
-    return;
+    return res.status(400).json({ error: 'Formular-ID fehlt' });
   }
 
   // Formular aus DB laden
@@ -18,8 +23,7 @@ export default async function handler(req, res) {
     .single();
 
   if (error || !form) {
-    res.status(404).json({ error: 'Formular nicht gefunden' });
-    return;
+    return res.status(404).json({ error: 'Formular nicht gefunden' });
   }
 
   // PDF generieren
@@ -31,6 +35,7 @@ export default async function handler(req, res) {
 
   doc.pipe(res);
 
+  // PDF Inhalt
   doc.fontSize(20).text('Formular', { underline: true });
   doc.moveDown();
 
