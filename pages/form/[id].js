@@ -105,7 +105,7 @@ try {
   
     // PDF Download Funktion
   const downloadPdf = () => {
-      if (!id) return;
+      // if (!id) return;
     // öffnet die API-Route zum Herunterladen der PDF
     window.open(`/api/downloadPdf?id=${id}`, '_blank');
   };

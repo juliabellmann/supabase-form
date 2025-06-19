@@ -7,8 +7,10 @@ import styled from 'styled-components';
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [forms, setForms] = useState([]);
-    const [profile, setProfile] = useState(null); 
+  const [profile, setProfile] = useState(null); 
   const router = useRouter();
+  const [userRole, setUserRole] = useState('user');
+
 
   useEffect(() => {
     const getUserFormsAndProfile = async () => {
@@ -24,23 +26,10 @@ export default function Dashboard() {
 
       setUser(user);
 
-      // Forms laden
-      const { data: formsData, error: formError } = await supabase
-        .from('forms')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (formError) {
-        console.error('Fehler beim Laden der Formulare:', formError.message);
-      } else {
-        setForms(formsData);
-      }
-
-      // Profile laden
+      // 📥 Profil & Rolle laden
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('company_name, company_street, company_house_nr, company_zip, company_city, company_contact_person')
+        .select('company_name, company_street, company_house_nr, company_zip, company_city, company_contact_person, role')
         .eq('id', user.id)
         .single();
 
@@ -48,8 +37,53 @@ export default function Dashboard() {
         console.error('Fehler beim Laden des Profils:', profileError.message);
       } else {
         setProfile(profileData);
+        setUserRole(profileData?.role || 'user'); // 👈 Rolle setzen
+      }
+
+      // 📥 Formulare laden (nach Rolle)
+      let query = supabase.from('forms').select('*').order('created_at', { ascending: false });
+
+      if (profileData?.role === 'admin') {
+        query = query.eq('status', 'submitted');
+      } else {
+        query = query.eq('user_id', user.id);
+      }
+
+      const { data: formsData, error: formError } = await query;
+
+      if (formError) {
+        console.error('Fehler beim Laden der Formulare:', formError.message);
+      } else {
+        setForms(formsData);
       }
     };
+
+    //   // Forms laden
+    //   const { data: formsData, error: formError } = await supabase
+    //     .from('forms')
+    //     .select('*')
+    //     .eq('user_id', user.id)
+    //     .order('created_at', { ascending: false });
+
+    //   if (formError) {
+    //     console.error('Fehler beim Laden der Formulare:', formError.message);
+    //   } else {
+    //     setForms(formsData);
+    //   }
+
+    //   // Profile laden
+    //   const { data: profileData, error: profileError } = await supabase
+    //     .from('profiles')
+    //     .select('company_name, company_street, company_house_nr, company_zip, company_city, company_contact_person')
+    //     .eq('id', user.id)
+    //     .single();
+
+    //   if (profileError) {
+    //     console.error('Fehler beim Laden des Profils:', profileError.message);
+    //   } else {
+    //     setProfile(profileData);
+    //   }
+    // };
 
  getUserFormsAndProfile();
   }, [router]);
@@ -169,20 +203,32 @@ export default function Dashboard() {
         <StyledSection>
           <StyledContainer>
 
-          <h2>Bereits bearbeitete Formulare:</h2>
+          {/* <h2>Bereits bearbeitete Formulare:</h2> */}
+          <h2>{userRole === 'admin' ? 'Alle eingereichten Formulare' : 'Bereits bearbeitete Formulare:'}</h2>
           {forms.length === 0 ? (
             <p>Es wurden noch keine Formulare ausgefüllt.</p>
             ) : (
             <ul>
               {forms.map((form) => (
                 <StyledList key={form.id}>
-                  📖
-                  Objekt: {form.objektbezeichnung || 'Noch nicht angegeben'} – Status: {form.status}
+                  📖Objekt: {form.objektbezeichnung || 'Noch nicht angegeben'} – Status: {form.status}
+                <div>
 
                   {/* Button immer zeigen – die Formularseite erkennt automatisch, ob es bearbeitbar ist */}
                   <StyledButton onClick={() => continueForm(form.id)}>
                     {form.status === 'draft' ? 'Weiter bearbeiten' : 'Ansehen'}
                   </StyledButton>
+
+                  {/* PDF-Download nur wenn Formular submitted ist */}
+                  {form.status === 'submitted' && (
+                    <StyledButton
+                    onClick={() => window.open(`/api/downloadPdf?id=${form.id}`, '_blank')}
+                    style={{ backgroundColor: '#888' }}
+                    >
+                      PDF
+                    </StyledButton>
+                  )}
+                  </div>
                 </StyledList>
               ))}
             </ul>
