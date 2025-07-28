@@ -26,6 +26,9 @@ export default function Form() {
     vergabedatum: "",
     allgemeine_objektinformation: "",
     baukonstruktion: "",
+    nuf: "",
+    vf: "",
+    tf: "",
   });
 
   const [isReadonly, setIsReadonly] = useState(false); // ⬅️ Zustand zum Sperren des Formulars
@@ -330,6 +333,72 @@ try {
 
         <StyledFieldset>
           <legend><h2>4. Flächen und Rauminhalte nach DIN 277:2021-08</h2></legend>
+          <div>
+            <label htmlFor='nuf'>Nutzungsflächen: </label>
+            <input
+            type='number'
+            id='nuf'
+            step="0.01"
+            min="0"
+            value={formData.nuf}
+            onChange={e => setFormData({ ...formData, nuf: e.target.value })}
+            />
+          </div>
+          <div>
+            <label htmlFor='tf'>Technikfläche: </label>
+            <input
+            type='number'
+            id='tf'
+            step="0.01"
+            min="0"
+            value={formData.tf}
+            onChange={e => setFormData({ ...formData, tf: e.target.value })}
+            />
+          </div>
+          <div>
+            <label htmlFor='vf'>Verkehrsfläche: </label>
+            <input
+            type='number'
+            id='vf'
+            step="0.01"
+            min="0"
+            value={formData.vf}
+            onChange={e => setFormData({ ...formData, vf: e.target.value })}
+            />
+          </div>
+          <div>
+            <label htmlFor='bgf'>Brutto-Grundfläche: </label>
+            <input
+            type='number'
+            id='bgf'
+            step="0.01"
+            min="0"
+            value={formData.bgf}
+            onChange={e => setFormData({ ...formData, bgf: e.target.value })}
+            />
+          </div>
+
+
+        <div>
+          <span>Netto-Raumfläche: </span>
+          <span>
+            {[
+              // verhindert NaN bei leeren Feldern:
+              parseFloat(formData.nuf) || 0, 
+              parseFloat(formData.vf) || 0,
+              parseFloat(formData.tf) || 0,
+              parseFloat(formData.bgf) || 0,
+            ]
+            // summieren von Zahlen:
+              .reduce((a, b) => a + b, 0)
+              .toFixed(2)
+              .replace('.', ',')}
+          </span>
+          <span> m²</span>
+        </div>
+
+
+
         </StyledFieldset>
 
         <StyledButton type="button" onClick={handleSave} disabled={isReadonly}>
