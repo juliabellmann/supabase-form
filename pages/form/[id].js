@@ -8,16 +8,22 @@ import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// import { useState } from "react";
+
 export default function Form() {
   const router = useRouter();
   const { id } = router.query;
+
+  // Datei + Bildvorschau (signed URL oder lokale Vorschau)
+  const [file, setFile] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+
 
 // hier das neue Formularfeld ergänzen
   const [formData, setFormData] = useState({
     city: '',
     size: [],
     strength: '',
-    files: [],
     status: 'draft',
     objektbezeichnung: '', 
     baubeginn: "",
@@ -26,92 +32,161 @@ export default function Form() {
     vergabedatum: "",
     allgemeine_objektinformation: "",
     baukonstruktion: "",
+    technische_anlagen: '',
+    beschreibung_sonstiges: '',
     nuf: "",
     vf: "",
     tf: "",
+    bgf: '',
+    image_file_path: null, // <-- Pfad im Storage (privater Bucket)
   });
 
   const [isReadonly, setIsReadonly] = useState(false); // ⬅️ Zustand zum Sperren des Formulars
+  // Hilfsfunktion: signed URL für bestehendes Bild erzeugen
+  async function refreshSignedUrl(filePath) {
+    if (!filePath) {
+      setImagePreviewUrl(null);
+      return;
+    }
+    const { data, error } = await supabase
+      .storage
+      .from('form-images')
+      .createSignedUrl(filePath, 60 * 10); // 10 Minuten
+    if (error) {
+      console.error('Signed URL Fehler:', error);
+      setImagePreviewUrl(null);
+      return;
+    }
+    setImagePreviewUrl(data.signedUrl);
+  }
 
+    // Formular laden
   useEffect(() => {
     if (id && id !== 'new') {
-      supabase.from('forms').select('*').eq('id', id).single().then(({ data }) => {
-        if (data) {
-          setFormData(data);
-
-          // ⬇️ Wenn das Formular eingereicht wurde, Formular schreibschützen
-          if (data.status === 'submitted') {
-            setIsReadonly(true);
+      supabase
+        .from('forms')
+        .select('*')
+        .eq('id', id)
+        .single()
+        .then(async ({ data, error }) => {
+          if (error) {
+            console.error(error);
+            return;
           }
-        }
-      });
+          if (data) {
+            setFormData(prev => ({ ...prev, ...data }));
+            if (data.status === 'submitted') setIsReadonly(true);
+            if (data.image_file_path) await refreshSignedUrl(data.image_file_path);
+          }
+        });
     }
   }, [id]);
 
-  const handleSave = async () => {
-    if (isReadonly) return; // ⛔ Änderungen blockieren, wenn Formular readonly ist
-
-    const user = await supabase.auth.getUser();
-    const data = { ...formData, user_id: user.data.user.id, status: 'draft' };
-
-    // Bedingungen / Abfrage für toast-Message
-try {
-    if (id === 'new') {
-      await supabase.from('forms').insert(data);
-      toast.success("Formular erfolgreich zwischengespeichert!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+    // Datei-Auswahl
+  function handleFileChange(e) {
+    const f = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+    setFile(f);
+    // lokale Vorschau (vor dem Upload)
+    if (f) {
+      const localUrl = URL.createObjectURL(f);
+      setImagePreviewUrl(localUrl);
     } else {
-      await supabase.from('forms').update(data).eq('id', id);
-      toast.success("Änderungen wurden gespeichert.", {
-        position: "top-center",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+      // wenn abgewählt
+      refreshSignedUrl(formData.image_file_path);
     }
-  } catch (error) {
-    toast.error("Beim Speichern ist ein Fehler aufgetreten.", {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
   }
+
+    // Upload ins private Bucket, Pfad = auth.uid()/timestamp-filename
+  async function uploadImage(fileToUpload) {
+    const { data: userData, error: userErr } = await supabase.auth.getUser();
+    if (userErr || !userData?.user) throw new Error('Nicht eingeloggt');
+    const userId = userData.user.id;
+
+    const filePath = `${userId}/${Date.now()}-${fileToUpload.name}`;
+
+    const { error: upErr } = await supabase
+      .storage
+      .from('form-images')
+      .upload(filePath, fileToUpload, {
+        cacheControl: '3600',
+        upsert: false,
+        contentType: fileToUpload.type,
+      });
+
+    if (upErr) throw upErr;
+    return filePath;
+  }
+
+    // Speichern (Zwischenspeichern / Aktualisieren)
+   const handleSave = async () => {
+    if (isReadonly) return;
+
+    try {
+      const { data: userRes } = await supabase.auth.getUser();
+      if (!userRes?.user) {
+        toast.error('Bitte einloggen.');
+        return;
+      }
+
+      let image_file_path = formData.image_file_path;
+
+      // Falls neue Datei gewählt → hochladen und Pfad übernehmen
+      if (file) {
+        image_file_path = await uploadImage(file);
+      }
+
+      const payload = {
+        ...formData,
+        user_id: userRes.user.id,
+        status: 'draft',
+        image_file_path,
+      };
+
+      if (id === 'new') {
+        const { error: insertErr } = await supabase.from('forms').insert(payload);
+        if (insertErr) throw insertErr;
+        toast.success('Formular erfolgreich zwischengespeichert!', { position: 'top-right' });
+      } else {
+        const { error: updateErr } = await supabase.from('forms').update(payload).eq('id', id);
+        if (updateErr) throw updateErr;
+        toast.success('Änderungen wurden gespeichert.', { position: 'top-center' });
+      }
+
+      // Nach dem Speichern ggf. neue signed URL laden (falls neues Bild)
+      if (image_file_path) await refreshSignedUrl(image_file_path);
+      setFormData(prev => ({ ...prev, image_file_path }));
+      setFile(null);
+    } catch (error) {
+      console.error(error);
+      toast.error('Beim Speichern ist ein Fehler aufgetreten.', { position: 'top-center' });
+    }
   };
 
+  // Absenden (final)
   const handleSubmit = async () => {
-    if (isReadonly) return; // ⛔ Einreichen blockieren, wenn bereits submitted
-
-    await supabase.from('forms').update({ ...formData, status: 'submitted' }).eq('id', id);
+    if (isReadonly) return;
+    const { error } = await supabase.from('forms').update({ ...formData, status: 'submitted' }).eq('id', id);
+    if (error) {
+      console.error(error);
+      toast.error('Fehler beim Absenden.');
+      return;
+    }
     router.push('/dashboard');
   };
 
   const toggleSize = (val) => {
-    if (isReadonly) return; // ⛔ Keine Auswahländerung bei readonly
+    if (isReadonly) return;
     setFormData(prev => ({
       ...prev,
-      size: prev.size.includes(val) ? prev.size.filter(s => s !== val) : [...prev.size, val]
+      size: prev.size.includes(val) ? prev.size.filter(s => s !== val) : [...prev.size, val],
     }));
   };
 
-  // const [isDownloading, setIsDownloading] = useState(false);
-  
-    // PDF Download Funktion
+  // PDF Download
   const downloadPdf = () => {
-      // if (!id) return;
-    // öffnet die API-Route zum Herunterladen der PDF
     window.open(`/api/downloadPdf?id=${id}`, '_blank');
   };
+
 
   return (
       <>
@@ -414,8 +489,20 @@ try {
         </StyledButton>
         
         <StyledFieldset>
-          <legend><h2>6. weitere Projektangaben</h2></legend>
-        </StyledFieldset>
+            <legend><h2>6. weitere Projektangaben</h2></legend>
+
+            {/* Bild hochladen */}
+            <div>
+              <label>Bild hochladen:</label>
+              <input type="file" accept="image/*" onChange={handleFileChange} disabled={isReadonly} />
+              {imagePreviewUrl && (
+                <div>
+                  <p>Aktuelles Bild:</p>
+                  <img src={imagePreviewUrl} alt="Formular Bild" width={200} />
+                </div>
+              )}
+            </div>
+          </StyledFieldset>
         
         {/* Buttons deaktivieren, wenn readonly */}
         <StyledButton type="button" onClick={handleSave} disabled={isReadonly}>
