@@ -288,7 +288,6 @@ export default function Form() {
               onChange={e => setFormData({ ...formData, allgemeine_objektinformation: e.target.value })}
               readOnly={isReadonly}
               rows={5}
-              // style={{ width: '100%' }}
             />
           </div>
 
@@ -301,7 +300,6 @@ export default function Form() {
               onChange={e => setFormData({ ...formData, baukonstruktion: e.target.value })}
               readOnly={isReadonly}
               rows={5}
-              // style={{ width: '100%' }}
             />
           </div>
 
@@ -309,13 +307,11 @@ export default function Form() {
             <label htmlFor="technische_anlagen">Technische Anlagen: </label>
             <textarea
               id="technische_anlagen"
-              placeholder="Zwar wurden Varianten für die Energieversorgung berechnet,
-                dennoch musste das Passivhaus an Fernwärme angeschlossen werden. Sie wird an einen gemeinsamen Speicher übergeben, an den auch Flachkollektoren angeschlossen sind. Um eine Nachrüstung von Photovoltaikelementen zu vereinfachen, wurden Leerrohre verlegt. Jede Wohnung erhielt eine Zu- und Abluftanlage mit Wärmerückgewinnung. Die Luftdichtheit der Gebäude wurde mit einem Blower-Door-Test geprüft. Die passivhaustauglichen Holz-Aluminium-Fenster mit Dreifachverglasung sind zudem hoch schalldämmend."
+              placeholder="Zwar wurden Varianten für die Energieversorgung berechnet, dennoch musste das Passivhaus an Fernwärme angeschlossen werden. Sie wird an einen gemeinsamen Speicher übergeben, an den auch Flachkollektoren angeschlossen sind. Um eine Nachrüstung von Photovoltaikelementen zu vereinfachen, wurden Leerrohre verlegt. Jede Wohnung erhielt eine Zu- und Abluftanlage mit Wärmerückgewinnung. Die Luftdichtheit der Gebäude wurde mit einem Blower-Door-Test geprüft. Die passivhaustauglichen Holz-Aluminium-Fenster mit Dreifachverglasung sind zudem hoch schalldämmend."
               value={formData.technische_anlagen}
               onChange={e => setFormData({ ...formData, technische_anlagen: e.target.value })}
               readOnly={isReadonly}
               rows={5}
-              // style={{ width: '100%' }}
             />
           </div>
 
@@ -328,7 +324,6 @@ export default function Form() {
               onChange={e => setFormData({ ...formData, beschreibung_sonstiges: e.target.value })}
               readOnly={isReadonly}
               rows={5}
-              // style={{ width: '100%' }}
             />
           </div>
 
