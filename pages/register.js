@@ -7,18 +7,12 @@ import Link from 'next/link';
 export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
   const router = useRouter();
 
   const handleRegister = async () => {
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: {
-          username,
-        }
-      }
     });
     if (!error) {
       alert('Registrierung erfolgreich!');
@@ -32,7 +26,6 @@ export default function Register() {
     <StyledPage>
       <h2>Registrieren</h2>
       <StyledContainer>
-        {/* <input placeholder="Benutzername" value={username} onChange={e => setUsername(e.target.value)} /> */}
         <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
         <input placeholder="Passwort" type="password" value={password} onChange={e => setPassword(e.target.value)} />
         <StyledButton onClick={handleRegister}>Registrieren</StyledButton>
